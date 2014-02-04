@@ -14,14 +14,12 @@ namespace GuessSecretNumber.Model
         List<int> _previousGuesses;
         int _number; //Det hemliga numret som ska gissas fram
 
-
-
-        //Egenskap som bestämmer om användaren får gissa igen. //EJ KLAR lägg till om användaren redan har gissat rätt tal.
+        //Egenskap som bestämmer om användaren får gissa igen.
         public bool CanMakeGuess
         {
             get
             {
-                return Count < MaxNumberOfGuesses;
+                return Count < MaxNumberOfGuesses || Outcome == Outcome.Correct;
             }
         }
 
@@ -50,22 +48,21 @@ namespace GuessSecretNumber.Model
             }
         }
 
-        //Egenskap som ger resultatet av den senaste gissningen //EJ KLAR
+        //Egenskap som ger resultatet av den senaste gissningen
         public Outcome Outcome
         {
             get;
             set;
         }
 
-        //Egenskap som sparar alla gjorda gissningar i en lista //EJ KLAR gör readonly
-        public List<int> PreviousGuesses
+        //Egenskap som sparar alla gjorda gissningar i en lista
+        public IEnumerable<int> PreviousGuesses
         {
             get
             {
                 return _previousGuesses;
             }
         }
-
 
 
         //Konstruktor
@@ -76,11 +73,12 @@ namespace GuessSecretNumber.Model
             Initialize();
         }
 
-        //Metod som nollställer allt och skapar ett nytt hemligt nummer. //EJ KLAR
+        //Metod som nollställer allt och skapar ett nytt hemligt nummer.
         public void Initialize()
         {
-            //Listan rensas
+            //Listan rensas och senaste gissningen sätts till indefinite
             _previousGuesses.Clear();
+            Outcome = Outcome.Indefinite;
 
             //Ett nytt slumptal tilldelas _number.
             Random randomNumber = new Random();
@@ -88,49 +86,55 @@ namespace GuessSecretNumber.Model
         }
 
 
-        //Metod som kollar användaren gissning och skickar tillbaka lämpliga meddelanden. //EJ KLAR
-        public bool MakeGuess(int number)
+        //Metod som kollar användarens gissning och skickar tillbaka lämpliga meddelanden.
+        public Outcome MakeGuess(int guess)
         {
 
             //Om talet är utanför 1 - 100
-            if (number > 100 || number < 1)
+            if (guess > 100 || guess < 1)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
+            //Om det var den sista gissningen.
+            else if(_previousGuesses.Count + 1 == MaxNumberOfGuesses)
+            {
+                Outcome = Outcome.NoMoreGuesses;
+            }
+
             //Om användaren redan gissat max antal gånger
-            if (Count >= MaxNumberOfGuesses)
+            else if (Count >= MaxNumberOfGuesses)
             {
                 throw new ApplicationException();
             }
 
             //Om talet redan är gissat
-            if (Array.IndexOf(_guessedNumbers, number) != -1)
+            else if (_previousGuesses.Contains(guess))
             {
-                Console.WriteLine("Du har redan gissat på {0}. Gör om gissningen!", number);
-                return false;
+                Outcome = Outcome.PreviousGuess;
             }
 
-            _guessedNumbers[Count++] = number;
-
-            //Om talet är större eller mindre än det hemliga talet
-            if (number > _number || number < _number)
+            //Om gissningen var för hög eller låg
+            else if (guess > _number || guess < _number)
             {
-
-                Console.WriteLine("{0} är för {2}. Du har {1} gissningar kvar", number, GuessesLeft, number > _number ? "högt" : "lågt");
-                if (Count == MaxNumberOfGuesses)
-                {
-                    Console.WriteLine("Det hemliga talet är {0}", _number);
-                }
-                return false;
+                Outcome = guess > _number  ?Outcome.High : Outcome.Low;
             }
 
-            Console.WriteLine("RÄTT GISSAT. Du klarade det på {0} försök.", Count);
-            return true;
+            //Om det var rätt!
+            else
+            {
+                Outcome = Outcome.Correct;
+            }
+
+
+            //gissningen läggs till i listan och Outcome returneras.
+            _previousGuesses.Add(guess);
+            return Outcome;
 
         }
 
     }
 
+    //Enum med olika statusar på den senaste gissningen
     enum Outcome { Indefinite, Low, High, Correct, NoMoreGuesses, PreviousGuess}
 }
