@@ -85,7 +85,6 @@ namespace GuessSecretNumber.Model
             _number = randomNumber.Next(1, 101);
         }
 
-
         //Metod som kollar användarens gissning och skickar tillbaka lämpliga meddelanden.
         public Outcome MakeGuess(int guess)
         {
@@ -96,20 +95,15 @@ namespace GuessSecretNumber.Model
                 throw new ArgumentOutOfRangeException();
             }
 
-            //Om det var den sista gissningen.
-            else if(_previousGuesses.Count + 1 == MaxNumberOfGuesses)
-            {
-                Outcome = Outcome.NoMoreGuesses;
-            }
-
             //Om användaren redan gissat max antal gånger
-            else if (Count >= MaxNumberOfGuesses)
+            if (Count >= MaxNumberOfGuesses)
             {
                 throw new ApplicationException();
             }
 
+
             //Om talet redan är gissat
-            else if (_previousGuesses.Contains(guess))
+            if (_previousGuesses.Contains(guess))
             {
                 Outcome = Outcome.PreviousGuess;
             }
@@ -117,24 +111,29 @@ namespace GuessSecretNumber.Model
             //Om gissningen var för hög eller låg
             else if (guess > _number || guess < _number)
             {
-                Outcome = guess > _number  ?Outcome.High : Outcome.Low;
+                Outcome = guess > _number  ? Outcome.High : Outcome.Low;
             }
 
             //Om det var rätt!
-            else
+            else if(guess == _number)
             {
                 Outcome = Outcome.Correct;
             }
+
+            //Om det var den sista gissningen.
+            else if (Count + 1 >= MaxNumberOfGuesses)
+            {
+                return Outcome = Outcome.NoMoreGuesses;
+            }  
 
 
             //gissningen läggs till i listan och Outcome returneras.
             _previousGuesses.Add(guess);
             return Outcome;
-
         }
 
     }
 
     //Enum med olika statusar på den senaste gissningen
-    enum Outcome { Indefinite, Low, High, Correct, NoMoreGuesses, PreviousGuess}
+    public enum Outcome { Indefinite, Low, High, Correct, NoMoreGuesses, PreviousGuess}
 }

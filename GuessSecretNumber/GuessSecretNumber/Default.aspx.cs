@@ -17,6 +17,15 @@ namespace GuessSecretNumber
 
         protected void GuessButton_Click(object sender, EventArgs e)
         {
+            int guess = int.Parse(GuessBox.Text);
+
+            //nytt secretnumber-objekt skapas
+            SecretNumber game = new SecretNumber();
+
+            Outcome guessStatus = game.MakeGuess(guess);
+
+            GuessBox.Text = String.Format("{0}", (int)game.Outcome);
+
 
         }
     }
