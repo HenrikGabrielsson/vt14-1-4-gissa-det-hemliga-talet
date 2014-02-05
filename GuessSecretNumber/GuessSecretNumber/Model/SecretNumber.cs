@@ -19,7 +19,7 @@ namespace GuessSecretNumber.Model
         {
             get
             {
-                return Count != MaxNumberOfGuesses || Outcome != Outcome.Correct;
+                return Count < MaxNumberOfGuesses && Outcome != Outcome.Correct;
             }
         }
 
@@ -92,13 +92,13 @@ namespace GuessSecretNumber.Model
             //Om talet är utanför 1 - 100
             if (guess > 100 || guess < 1)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("Talet var inte mellan 1-100.");
             }
 
             //Om användaren redan gissat max antal gånger
             if (Count > MaxNumberOfGuesses)
             {
-                throw new ApplicationException();
+                throw new ApplicationException("Du har redan gissat max antal gånger.");
             }
 
 
@@ -120,7 +120,7 @@ namespace GuessSecretNumber.Model
             //Om gissningen var för hög eller låg
             if (guess > _number || guess < _number)
             {
-                Outcome = guess > _number  ? Outcome.High : Outcome.Low;
+                Outcome = guess > _number ? Outcome.High : Outcome.Low;
             }
 
             //Om det var den sista gissningen.
@@ -132,9 +132,8 @@ namespace GuessSecretNumber.Model
             //Outcome returneras.
             return Outcome;
         }
-
     }
-
+    
     //Enum med olika statusar på den senaste gissningen
     public enum Outcome { Indefinite, Low, High, Correct, NoMoreGuesses, PreviousGuess}
 }
