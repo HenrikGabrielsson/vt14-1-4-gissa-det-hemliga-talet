@@ -19,7 +19,7 @@ namespace GuessSecretNumber.Model
         {
             get
             {
-                return Count < MaxNumberOfGuesses || Outcome != Outcome.Correct;
+                return Count != MaxNumberOfGuesses || Outcome != Outcome.Correct;
             }
         }
 
@@ -108,26 +108,28 @@ namespace GuessSecretNumber.Model
                 return Outcome = Outcome.PreviousGuess;
             }
 
+            //gissningen läggs till i listan 
+            _previousGuesses.Add(guess);
+
             //Om det var rätt!
-            else if (guess == _number)
+            if (guess == _number)
             {
                 return Outcome = Outcome.Correct;
             }
 
             //Om gissningen var för hög eller låg
-            else if (guess > _number || guess < _number)
+            if (guess > _number || guess < _number)
             {
                 Outcome = guess > _number  ? Outcome.High : Outcome.Low;
             }
 
             //Om det var den sista gissningen.
-            if (Count + 1 >= MaxNumberOfGuesses)
+            if (Count == MaxNumberOfGuesses)
             {
                 Outcome = Outcome.NoMoreGuesses;
             } 
 
-            //gissningen läggs till i listan och Outcome returneras.
-            _previousGuesses.Add(guess);
+            //Outcome returneras.
             return Outcome;
         }
 
