@@ -14,7 +14,7 @@
         <asp:TextBox ID="GuessBox" runat="server"></asp:TextBox>
 
         <asp:Button ID="GuessButton" runat="server" Text="Gissa" OnClick="GuessButton_Click" />
-
+        <asp:Label ID="GuessOutcome" runat="server" Text="Label"></asp:Label>
     </div>
     </form>
 </body>
