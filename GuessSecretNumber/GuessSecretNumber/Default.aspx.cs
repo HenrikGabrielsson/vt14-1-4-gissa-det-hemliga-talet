@@ -13,6 +13,16 @@ namespace GuessSecretNumber
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            //Om sidan laddas och det inte är ett spel igång så...
+            if (Session["gameSession"] == null)
+            {
+                GuessButton.Text = "Slumpa ett nytt hemligt tal";
+                GuessBox.Visible = false;
+
+                RequiredFieldValidator.Enabled = false;
+                RangeValidator.Enabled = false;
+
+            }            
 
         }
 
@@ -21,19 +31,28 @@ namespace GuessSecretNumber
             if (IsValid)
             {
 
-                int guess = int.Parse(GuessBox.Text);
-
                 //nytt secretnumber-objekt skapas om det inte redan finns en session startad med ett spel.
                 SecretNumber game;
 
                 if (Session["gameSession"] == null)
                 {
                     game = new SecretNumber();
+                    Session["gameSession"] = game;
+
+                    GuessButton.Text = "Gissa";
+                    GuessBox.Visible = true;
+
+                    RequiredFieldValidator.Enabled = true;
+                    RangeValidator.Enabled = true;
+
+                    return;
                 }
                 else
                 {
                     game = (SecretNumber)Session["gameSession"];
                 }
+
+                int guess = int.Parse(GuessBox.Text);
 
                 //gissningen görs och kollas. Antalet gissningar uppdateras på sidan
                 Outcome guessStatus = game.MakeGuess(guess);
@@ -62,12 +81,17 @@ namespace GuessSecretNumber
                     //sessionen förstörs om man får slut på gissningar eller vinner.
                     case Outcome.NoMoreGuesses:
                         GuessOutcome.Text = String.Format("Du har slut på gissningar. Det hemliga talet var {0} ", game.Number);
-                        Session.Abandon();
 
+                        GuessButton.Text = "Slumpa ett nytt hemligt tal";
+
+                        Session.Abandon();
                         break;
 
                     case Outcome.Correct:
                         GuessOutcome.Text = String.Format("Du vann efter {0} försök!", game.Count);
+
+                        GuessButton.Text = "Slumpa ett nytt hemligt tal";
+
                         Session.Abandon();
                         break;
                 }

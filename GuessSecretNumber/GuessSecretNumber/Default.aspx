@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Gissa talet</title>
+    <link href="~/style/style.css" rel="stylesheet" />
 </head>
 <body>
 
@@ -17,13 +18,13 @@
     <div>
         <%-- Input --%>
         <label for="GuessBox">Ange ett tal mellan 1 och 100: </label>
-        <asp:TextBox ID="GuessBox" runat="server"></asp:TextBox>
+        <asp:TextBox ID="GuessBox" runat="server" ></asp:TextBox>
         
         <%-- Validering --%>
         <asp:RangeValidator ID="RangeValidator" runat="server" ErrorMessage="Inmatningen måste vara ett heltal mellan 1 -100." Display="Dynamic" Text="*" ControlToValidate="GuessBox" MaximumValue="100" MinimumValue="1" Type="Integer"></asp:RangeValidator>
         <asp:RequiredFieldValidator ID="RequiredFieldValidator" runat="server" ErrorMessage="Du får inte lämna fältet tomt!" Text="*" ControlToValidate="GuessBox"></asp:RequiredFieldValidator>
 
-        <asp:Button ID="GuessButton" runat="server" Text="Slumpa nytt hemligt tal" OnClick="GuessButton_Click" />
+        <asp:Button ID="GuessButton" runat="server" Text="Gissa" OnClick="GuessButton_Click" />
 
     </div>
     </form>
