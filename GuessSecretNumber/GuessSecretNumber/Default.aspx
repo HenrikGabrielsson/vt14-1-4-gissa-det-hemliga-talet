@@ -9,6 +9,8 @@
 </head>
 <body>
 
+    <h1>Gissa talet</h1>
+
     <form id="form" runat="server">
     
         <div id="errorDiv">
@@ -17,7 +19,7 @@
 
     <div>
         <%-- Input --%>
-        <label for="GuessBox">Ange ett tal mellan 1 och 100: </label>
+        <label for="GuessBox" id="GuessInfo">Ange ett tal mellan 1 och 100: </label>
         <asp:TextBox ID="GuessBox" runat="server" ></asp:TextBox>
         
         <%-- Validering --%>
@@ -30,7 +32,7 @@
     </form>
     <div id="resultDiv">
         <%-- Output --%>
-        <asp:Label ID="GuessOutcome" runat="server"></asp:Label>
+        <asp:Label ID="GuessOutcome" runat="server"></asp:Label><br />
         <asp:Label ID="GuessesMade" runat="server"></asp:Label>
     </div>
 </body>
