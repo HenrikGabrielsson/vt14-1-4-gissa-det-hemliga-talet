@@ -19,7 +19,7 @@ namespace GuessSecretNumber.Model
         {
             get
             {
-                return Count < MaxNumberOfGuesses || Outcome == Outcome.Correct;
+                return Count < MaxNumberOfGuesses || Outcome != Outcome.Correct;
             }
         }
 
@@ -96,7 +96,7 @@ namespace GuessSecretNumber.Model
             }
 
             //Om användaren redan gissat max antal gånger
-            if (Count >= MaxNumberOfGuesses)
+            if (Count > MaxNumberOfGuesses)
             {
                 throw new ApplicationException();
             }
@@ -105,7 +105,13 @@ namespace GuessSecretNumber.Model
             //Om talet redan är gissat
             if (_previousGuesses.Contains(guess))
             {
-                Outcome = Outcome.PreviousGuess;
+                return Outcome = Outcome.PreviousGuess;
+            }
+
+            //Om det var rätt!
+            else if (guess == _number)
+            {
+                return Outcome = Outcome.Correct;
             }
 
             //Om gissningen var för hög eller låg
@@ -114,18 +120,11 @@ namespace GuessSecretNumber.Model
                 Outcome = guess > _number  ? Outcome.High : Outcome.Low;
             }
 
-            //Om det var rätt!
-            else if(guess == _number)
-            {
-                Outcome = Outcome.Correct;
-            }
-
             //Om det var den sista gissningen.
-            else if (Count + 1 >= MaxNumberOfGuesses)
+            if (Count + 1 >= MaxNumberOfGuesses)
             {
-                return Outcome = Outcome.NoMoreGuesses;
-            }  
-
+                Outcome = Outcome.NoMoreGuesses;
+            } 
 
             //gissningen läggs till i listan och Outcome returneras.
             _previousGuesses.Add(guess);

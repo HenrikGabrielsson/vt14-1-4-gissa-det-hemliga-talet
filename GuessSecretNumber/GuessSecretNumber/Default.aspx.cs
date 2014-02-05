@@ -12,6 +12,7 @@ namespace GuessSecretNumber
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
         }
 
         protected void GuessButton_Click(object sender, EventArgs e)
@@ -31,38 +32,49 @@ namespace GuessSecretNumber
                 game = (SecretNumber)Session["gameSession"];
             }
 
+            //gissningen görs och kollas. Antalet gissningar uppdateras på sidan
             Outcome guessStatus = game.MakeGuess(guess);
-            
-            //if-satser som kollar vad som kom tillbaka från secretNumber-objektet och meddelar användaren på lämpligt sätt
-            if(guessStatus == Outcome.PreviousGuess)
+
+            GuessesMade.Text = "Gjorda gissningar: ";
+            foreach(int prevGuess in game.PreviousGuesses)
             {
-                GuessOutcome.Text = "redan gissat";
-            }
-            else if (guessStatus == Outcome.NoMoreGuesses)
-            {
-                GuessOutcome.Text = "Gissat för många gånger";
-            }
-            else if(guessStatus == Outcome.High)
-            {
-                GuessOutcome.Text = "För högt";
-            }
-            else if(guessStatus == Outcome.Low)
-            {
-                GuessOutcome.Text = "För lågt";
-            }
-            
-            else if(guessStatus == Outcome.Correct)
-            {
-                GuessOutcome.Text = "RÄTT";
-            }
-            else
-            {
-                throw new ApplicationException();
+                GuessesMade.Text += String.Format("{0}", prevGuess);
             }
 
+            //switch som kollar vad som kom tillbaka från secretNumber-objektet och meddelar användaren på lämpligt sätt
+            switch(guessStatus)
+            {
+                case Outcome.PreviousGuess:
+                    GuessOutcome.Text = "Du har redan gissat på det talet.";
+                    break;
+
+                case Outcome.High:
+                    GuessOutcome.Text = "För högt.";
+                    break;
+                
+                case Outcome.Low:
+                    GuessOutcome.Text = "För lågt";
+                    break;
+
+                //sessionen förstörs om man får slut på gissningar eller vinner.
+                case Outcome.NoMoreGuesses:
+                    GuessOutcome.Text = String.Format("Du har slut på gissningar. Det hemliga talet var {0} ", game.Number);
+                    Session.Abandon();
+
+                    break;
+
+                case Outcome.Correct:
+                    GuessOutcome.Text = String.Format("Du vann efter {0} försök!", game.Count);
+                    Session.Abandon();
+                    break;
+            }
+
+
+            //game sparas alltid på nytt
             Session["gameSession"] = game;
+
 
 
         }
     }
-}
+}            

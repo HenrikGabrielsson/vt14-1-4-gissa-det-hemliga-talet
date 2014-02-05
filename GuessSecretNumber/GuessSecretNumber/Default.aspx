@@ -13,9 +13,15 @@
         <label for="GuessBox">Ange ett tal mellan 1 och 100: </label>
         <asp:TextBox ID="GuessBox" runat="server"></asp:TextBox>
 
+
         <asp:Button ID="GuessButton" runat="server" Text="Gissa" OnClick="GuessButton_Click" />
-        <asp:Label ID="GuessOutcome" runat="server" Text="Label"></asp:Label>
+
     </div>
     </form>
+    <div id="resultDiv">
+        <%-- Output --%>
+        <asp:Label ID="GuessOutcome" runat="server" Text="Label"></asp:Label>
+        <asp:Label ID="GuessesMade" runat="server" Text="Label"></asp:Label>
+    </div>
 </body>
 </html>
